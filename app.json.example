@@ -1,0 +1,69 @@
+{
+  "expo": {
+    "name": "paper-starter",
+    "slug": "paper-starter",
+    "version": "0.0.1",
+    "privacy": "unlisted",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#388bb3"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "userInterfaceStyle": "automatic",
+      "bundleIdentifier": "com.lexxyungcarter.paperstarter",
+      "buildNumber": "0.0.1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "userInterfaceStyle": "automatic",
+      "package": "com.lexxyungcarter.paperstarter",
+      "versionCode": 1,
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleMaps": {
+          "apiKey": "TESTING"
+        },
+        "googleMobileAdsAppId": "ca-app-pub-234~234"
+      }
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with us."
+        }
+      ]
+    ],
+    "extra": {
+      "bugsnag": {
+        "apiKey": ""
+      }
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "@bugsnag/expo/hooks/post-publish.js",
+          "config": {}
+        }
+      ]
+    },
+    "description": "Starter Kit for kick-starting new app development with Laravel stack, AppWrite, and Firebase.",
+    "primaryColor": "#0636c2"
+  }
+}
