@@ -1,29 +1,36 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import React from "react";
+import { Box } from "native-base";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
-import { Text, View } from '../components/Themed';
-import { RootStackScreenProps } from '../types';
+import { RootStackScreenProps } from "../types";
+import { AppText } from "@/components";
 
-export default function NotFoundScreen({ navigation }: RootStackScreenProps<'NotFound'>) {
+export default function NotFoundScreen({
+  navigation,
+}: RootStackScreenProps<"NotFound">) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>This screen doesn't exist.</Text>
-      <TouchableOpacity onPress={() => navigation.replace('Root')} style={styles.link}>
-        <Text style={styles.linkText}>Go to home screen!</Text>
+    <Box style={styles.container}>
+      <AppText style={styles.title}>This screen doesn't exist.</AppText>
+      <TouchableOpacity
+        onPress={() => navigation.replace("Root")}
+        style={styles.link}
+      >
+        <AppText style={styles.linkText}>Go to home screen!</AppText>
       </TouchableOpacity>
-    </View>
+    </Box>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   link: {
     marginTop: 15,
@@ -31,6 +38,6 @@ const styles = StyleSheet.create({
   },
   linkText: {
     fontSize: 14,
-    color: '#2e78b7',
+    color: "#2e78b7",
   },
 });

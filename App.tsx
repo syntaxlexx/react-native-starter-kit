@@ -1,23 +1,38 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { LogBox, View, Text } from "react-native";
+import Settings from "./constants/Settings";
 
 import useCachedResources from "./hooks/useCachedResources";
 import Navigation from "@/navigation";
-import { View } from "react-native";
 
 // theming
-import { Provider as PaperProvider } from "react-native-paper";
+import { NativeBaseProvider } from "native-base";
 import useColorScheme from "@/hooks/useColorScheme";
-import { PaperDarkTheme, PaperDefaultTheme, PreferencesContext } from "./theme";
+import { NativeBaseTheme, PreferencesContext, ThemeColors } from "./theme";
 
-export default function App() {
+const nativeBaseConfig = {
+  dependencies: {
+    "linear-gradient": require("expo-linear-gradient").LinearGradient,
+  },
+};
+
+// react query
+const queryClient = new QueryClient();
+
+// logging
+import logger from "@/util/logger";
+logger.start();
+
+import Bugsnag from "@bugsnag/expo";
+const ErrorBoundary = Bugsnag.getPlugin("react").createErrorBoundary(React);
+
+const App = () => {
   const isLoadingComplete = useCachedResources();
-  const colorScheme = useColorScheme();
-
+  const colorScheme = Settings.supportDarkMode ? useColorScheme() : "light";
   const [isThemeDark, setIsThemeDark] = React.useState(colorScheme === "dark");
-  let theme = isThemeDark ? PaperDefaultTheme : PaperDarkTheme;
-
   const toggleTheme = React.useCallback(() => {
     return setIsThemeDark(!isThemeDark);
   }, [isThemeDark]);
@@ -30,25 +45,56 @@ export default function App() {
     [toggleTheme, isThemeDark]
   );
 
+  LogBox.ignoreLogs(["Setting a timer for a long period of time"]);
+  LogBox.ignoreLogs(["NativeBase: The contrast ratio of"]);
+
   if (!isLoadingComplete) {
     return null;
   } else {
     return (
       <PreferencesContext.Provider value={preferences}>
-        <PaperProvider theme={theme}>
-          <SafeAreaProvider>
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: isThemeDark ? "#000" : "#fff",
-              }}
-            >
-              <StatusBar style={isThemeDark ? "light" : "dark"} />
-              <Navigation isThemeDark={isThemeDark} />
-            </View>
-          </SafeAreaProvider>
-        </PaperProvider>
+        <NativeBaseProvider theme={NativeBaseTheme} config={nativeBaseConfig}>
+          <QueryClientProvider client={queryClient}>
+            <SafeAreaProvider>
+              {/* avoid white flicker when on dark mode */}
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: isThemeDark
+                    ? ThemeColors.dark.background
+                    : ThemeColors.light.background,
+                }}
+              >
+                <Navigation isThemeDark={isThemeDark} />
+                {/* <StatusBar
+                  translucent
+                  backgroundColor="transparent"
+                  // style={isThemeDark ? "light" : "dark"}
+                  // backgroundColor={isThemeDark ? "#000" : "#fff"}
+                  // translucent={true}
+                /> */}
+              </View>
+            </SafeAreaProvider>
+          </QueryClientProvider>
+        </NativeBaseProvider>
       </PreferencesContext.Provider>
     );
   }
-}
+};
+
+const ErrorView = () => (
+  <View>
+    <Text>An error occurred while running the app.</Text>
+  </View>
+);
+
+const onError = (event) => {
+  // callback will only run for errors caught by boundary
+  console.log("error captured", event);
+};
+
+export default () => (
+  <ErrorBoundary FallbackComponent={ErrorView} onError={onError}>
+    <App />
+  </ErrorBoundary>
+);

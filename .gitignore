@@ -76,7 +76,12 @@ dist/
 
 # local env files
 .env*.local
+.env*.production
+.env*.development
 
 # expo-cli generated files
 /android
 /ios
+
+# sensitive files
+app.json

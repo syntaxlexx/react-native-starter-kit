@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "paper-starter",
-    "slug": "paper-starter",
+    "name": "RN NativeBase Starter Kit",
+    "slug": "rn-nativebase-starter-kit",
     "version": "0.0.1",
     "privacy": "unlisted",
     "orientation": "portrait",
@@ -20,7 +20,7 @@
     "ios": {
       "supportsTablet": true,
       "userInterfaceStyle": "automatic",
-      "bundleIdentifier": "com.lexxyungcarter.paperstarter",
+      "bundleIdentifier": "com.lexxyungcarter.rnstarterkit",
       "buildNumber": "0.0.1"
     },
     "android": {
@@ -29,14 +29,14 @@
         "backgroundColor": "#ffffff"
       },
       "userInterfaceStyle": "automatic",
-      "package": "com.lexxyungcarter.paperstarter",
+      "package": "com.lexxyungcarter.rnstarterkit",
       "versionCode": 1,
       "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
           "apiKey": "TESTING"
         },
-        "googleMobileAdsAppId": "ca-app-pub-234~234"
+        "googleMobileAdsAppId": ""
       }
     },
     "web": {

@@ -1,120 +1,79 @@
-import { FontAwesome } from "@expo/vector-icons";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React, { useCallback, useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
-import { Pressable } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
 
-import Colors from "../constants/Colors";
-import ModalScreen from "../screens/ModalScreen";
-import NotFoundScreen from "../screens/NotFoundScreen";
-import TabOneScreen from "../screens/TabOneScreen";
-import TabTwoScreen from "../screens/TabTwoScreen";
-import {
-  RootStackParamList,
-  RootTabParamList,
-  RootTabScreenProps,
-} from "../types";
+import AuthNavigator from "./AuthNavigator";
+import AppNavigator from "./AppNavigator";
+import IntroNavigator from "./IntroNavigator";
 import LinkingConfiguration from "./LinkingConfiguration";
+
+import OnboardingContext from "@/onboarding/context";
+import onboardingStorage from "@/onboarding/storage";
+import AuthContext from "@/auth/context";
+import authStorage from "@/auth/storage";
+import { UserEntity } from "@/types.project";
 
 // theming
 import { NavigationDarkTheme, NavigationDefaultTheme } from "../theme";
+import { View } from "react-native";
 
 export default function Navigation({ isThemeDark }: { isThemeDark: boolean }) {
-  let theme = isThemeDark ? NavigationDarkTheme : NavigationDefaultTheme;
+  const [user, setUser] = useState<UserEntity | undefined>();
+  const [isOnboard, setIsOnboard] = useState<boolean>(false);
+  const [appIsReady, setAppIsReady] = useState<boolean>(false);
 
-  return (
-    <NavigationContainer linking={LinkingConfiguration} theme={theme}>
-      <RootNavigator isThemeDark={isThemeDark} />
-    </NavigationContainer>
-  );
-}
+  const initialiseData = async () => {
+    const boarded = await onboardingStorage.get();
+    if (boarded) setIsOnboard(true);
+    const user = await authStorage.getUser();
+    if (user) setUser(user);
+  };
 
-/**
- * A root stack navigator is often used for displaying modals on top of all other content.
- * https://reactnavigation.org/docs/modal
- */
-const Stack = createNativeStackNavigator<RootStackParamList>();
-
-function RootNavigator({ isThemeDark }: { isThemeDark: boolean }) {
-  return (
-    <Stack.Navigator
-      screenOptions={
-        {
-          // animation: "slide_from_right",
-        }
+  useEffect(() => {
+    async function prepare() {
+      try {
+        await SplashScreen.preventAutoHideAsync();
+        // Pre-load fonts, make any API calls you need to do here
+        await initialiseData();
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Tell the application to render
+        setAppIsReady(true);
       }
-    >
-      <Stack.Screen name="Root" options={{ headerShown: false }}>
-        {(props) => <BottomTabNavigator {...props} isThemeDark={isThemeDark} />}
-      </Stack.Screen>
-      <Stack.Screen
-        name="NotFound"
-        component={NotFoundScreen}
-        options={{ title: "Oops!" }}
-      />
-      <Stack.Group screenOptions={{ presentation: "modal" }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
-    </Stack.Navigator>
-  );
-}
+    }
 
-/**
- * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
- * https://reactnavigation.org/docs/bottom-tab-navigator
- */
-const BottomTab = createBottomTabNavigator<RootTabParamList>();
+    prepare();
+  }, []);
 
-function BottomTabNavigator({ isThemeDark }: { isThemeDark: boolean }) {
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
+  if (!appIsReady) {
+    return null;
+  }
+
   return (
-    <BottomTab.Navigator
-      initialRouteName="TabOne"
-      screenOptions={{
-        tabBarActiveTintColor: Colors[isThemeDark ? "dark" : "light"].tint,
-      }}
-    >
-      <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<"TabOne">) => ({
-          title: "Tab One",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate("Modal")}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}
-            >
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[isThemeDark ? "dark" : "light"].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
-        })}
-      />
-      <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
-        options={{
-          title: "Tab Two",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
-      />
-    </BottomTab.Navigator>
+    <OnboardingContext.Provider value={{ isOnboard, setIsOnboard }}>
+      <AuthContext.Provider value={{ user, setUser }}>
+        <NavigationContainer
+          linking={LinkingConfiguration}
+          theme={isThemeDark ? NavigationDarkTheme : NavigationDefaultTheme}
+        >
+          <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+            {!isOnboard ? (
+              <IntroNavigator />
+            ) : user ? (
+              <AppNavigator user={user} />
+            ) : (
+              <AuthNavigator />
+            )}
+          </View>
+        </NavigationContainer>
+      </AuthContext.Provider>
+    </OnboardingContext.Provider>
   );
-}
-
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }
