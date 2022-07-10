@@ -11,3 +11,4 @@ export { default as AppTextInput } from "./AppTextInput";
 export { default as ComingSoon } from "./ComingSoon";
 export { default as ListItem } from "./ListItem";
 export { default as OfflineNotice } from "./OfflineNotice";
+export { default as ToggleDarkMode } from "./ToggleDarkMode";

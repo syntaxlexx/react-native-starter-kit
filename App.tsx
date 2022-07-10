@@ -32,7 +32,8 @@ const ErrorBoundary = Bugsnag.getPlugin("react").createErrorBoundary(React);
 const App = () => {
   const isLoadingComplete = useCachedResources();
   const colorScheme = Settings.supportDarkMode ? useColorScheme() : "light";
-  const [isThemeDark, setIsThemeDark] = React.useState(colorScheme === "dark");
+  const [isThemeDark, setIsThemeDark] = React.useState(colorScheme == "dark");
+
   const toggleTheme = React.useCallback(() => {
     return setIsThemeDark(!isThemeDark);
   }, [isThemeDark]);
@@ -52,10 +53,10 @@ const App = () => {
     return null;
   } else {
     return (
-      <PreferencesContext.Provider value={preferences}>
+      <SafeAreaProvider>
         <NativeBaseProvider theme={NativeBaseTheme} config={nativeBaseConfig}>
-          <QueryClientProvider client={queryClient}>
-            <SafeAreaProvider>
+          <PreferencesContext.Provider value={preferences}>
+            <QueryClientProvider client={queryClient}>
               {/* avoid white flicker when on dark mode */}
               <View
                 style={{
@@ -66,18 +67,15 @@ const App = () => {
                 }}
               >
                 <Navigation isThemeDark={isThemeDark} />
-                {/* <StatusBar
-                  translucent
-                  backgroundColor="transparent"
-                  // style={isThemeDark ? "light" : "dark"}
-                  // backgroundColor={isThemeDark ? "#000" : "#fff"}
-                  // translucent={true}
-                /> */}
+                <StatusBar
+                  style={isThemeDark ? "light" : "dark"}
+                  backgroundColor={ThemeColors.primary}
+                />
               </View>
-            </SafeAreaProvider>
-          </QueryClientProvider>
+            </QueryClientProvider>
+          </PreferencesContext.Provider>
         </NativeBaseProvider>
-      </PreferencesContext.Provider>
+      </SafeAreaProvider>
     );
   }
 };

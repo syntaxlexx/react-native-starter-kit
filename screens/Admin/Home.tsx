@@ -10,15 +10,18 @@ import defaultStyles from "@/constants/Styles";
 // import StackedBarChartExample from "./Charts/StackedBarChartExample";
 // import PieChartExample from "./Charts/PieChartExample";
 // import ContributionGraphExample from "./Charts/ContributionGraphExample";
-import { AppScreen2, AppText } from "@/components";
+import { AppButton, AppScreen2, AppText } from "@/components";
+import useAuth from "@/auth/useAuth";
 
 function Home({ navigation }) {
+  const { logout } = useAuth();
   return (
     <AppScreen2>
       <ScrollView style={styles.container}>
         <AppText color="muted.500" fontSize="xl">
           Welcome Admin
         </AppText>
+        <AppButton title="Logout" onPress={logout} />
         {/* 
       <Spacer h={5} />
 

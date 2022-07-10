@@ -9,9 +9,8 @@ import Layout from "@/constants/Layout";
 import Settings from "@/constants/Settings";
 import acelordsFunctions from "@/util/acelordsFunctions";
 import useOnboarding from "@/onboarding/useOnboarding";
-import useThemeToggler from "@/hooks/useThemeToggler";
 import Constants from "expo-constants";
-import { AppButton, AppIcon, AppText } from "@/components";
+import { AppButton, AppIcon, AppText, ToggleDarkMode } from "@/components";
 
 function Welcome({ navigation }) {
   const onboardingInfo = useOnboarding();
@@ -34,8 +33,6 @@ function Welcome({ navigation }) {
   const resetApp = async () => {
     await onboardingInfo.reset();
   };
-
-  const { isThemeDark, toggleTheme, iconName } = useThemeToggler();
 
   return (
     <Box style={styles.container}>
@@ -85,15 +82,9 @@ function Welcome({ navigation }) {
       />
 
       <Box style={styles.content}>
-        <TouchableOpacity style={styles.changeThemeBtn} onPress={toggleTheme}>
-          <AppIcon
-            name={iconName}
-            size="lg"
-            style={{
-              color: "#fff",
-            }}
-          />
-        </TouchableOpacity>
+        <Box style={styles.changeThemeBtn}>
+          <ToggleDarkMode />
+        </Box>
 
         <Box position="relative" h="100%">
           <Box alignItems="center" mt="20%">

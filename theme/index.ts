@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  DarkTheme,
-  DefaultTheme,
-} from "@react-navigation/native";
+import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StorageManager, ColorMode } from "native-base";
 const tintColorLight = "#388bb3";
@@ -78,10 +75,10 @@ export const colorModeManager: StorageManager = {
 };
 
 // navigation
-export const NavigationDefaultTheme = DefaultTheme
+export const NavigationDefaultTheme = DefaultTheme;
 export const NavigationDarkTheme = DarkTheme;
 
 export const PreferencesContext = React.createContext({
-  toggleTheme: () => { },
+  toggleTheme: () => {},
   isThemeDark: false,
 });

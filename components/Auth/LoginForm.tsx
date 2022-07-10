@@ -31,13 +31,13 @@ function LoginForm({ navigation }) {
     setLoginFailed(false);
     setErrorMessage(null);
 
-    const result = await authApi.login(email, password);
-    if (result.ok) {
-      console.log("result", result.data);
+    const response = await authApi.login(email, password);
+    if (response.ok) {
       setLoginFailed(false);
-      await auth.login(result.data);
+      await auth.login(response.data);
       return;
     }
+
     setLoginFailed(true);
     setErrorMessage("Invalid email and/or password.");
   };
