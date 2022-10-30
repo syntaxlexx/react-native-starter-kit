@@ -65,8 +65,8 @@ All pull requests are most welcome.
 ## Issues
 You can mail any of the following parties
 - [Personal Mail](mailto:lexxyungcarter@gmail.com)
-- [Business Mail](mailto:lexx@acelords.space)
-- [AceLords](https://acelords.space)
+- [Business Mail](mailto:lexx@acelords.com)
+- [AceLords](https://acelords.com)
 
 ## Outro
 **DBAD** - Don't Be A D*ck! - This is being offered for free, and it would go a long way 
